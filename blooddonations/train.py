@@ -9,13 +9,13 @@ from features import Features
 
 #initialize variables
 maxtrainingtime = 1200 #20 * 60 = 20 minutes
-maxnumberofiterationloss = 20
-roundlevel = 3
+maxnumberofiterationloss = 100
+roundlevel = 4
 metrics = []
 
 # reproducable script
-random.seed(1)
-np.random.seed(1)
+random.seed(21)
+np.random.seed(21)
 
 datadir = sys.argv[1]
 
@@ -27,7 +27,12 @@ floatcols = [
     'Months since Last Donation',
     'Number of Donations',
     'Total Volume Donated (c.c.)',
-    'Months since First Donation'
+    'Months since First Donation',
+    "TimeSince",
+    "TimeSinceDifference",
+    "TimeSinceMedianDifference",
+    "TimeSinceMinDifference",
+    "TimeSinceMaxDifference"
 ]
 
 metacols = [
@@ -63,9 +68,9 @@ for colname in classificationcols:
 
 
 rfc = RandomForestClassifier(
-    max_depth=10,
-    criterion="entropy",
-    min_samples_leaf=30,
+    max_depth=8,
+    criterion="gini",
+    min_samples_leaf=8,
     #n_estimators=50,
     #n_jobs=-1
     n_estimators=0,

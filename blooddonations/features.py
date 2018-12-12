@@ -1,22 +1,25 @@
+import numpy as np
+import math
+
 class Features:
     
     @staticmethod
     def compute(df):
-        def lastdonationrange(val):
-            if val > 0 and val < 4:
-                return "1-3Months"
-            
-            if val > 3 and val < 7:
-                return "4-6Months"
-            
-            if val > 6 and val < 10:
-                return "7-9Months"
+        def timesince(row):
+            return ((row["Months since First Donation"])   / (row["Number of Donations"] * 1.0)) **2
 
-            if val > 9 and val < 13:
-                return "10-12Months"
-            
-            return ">12Months"
+        def timedifference(row):
+            return (((row["Months since Last Donation"] * 1.0) - (row["TimeSince"] * 1.0)) **2)
+        
+        df["TimeSince"] = df.apply(timesince, axis=1)
+        df["TimeSinceDifference"] = df.apply(timedifference, axis=1)
+        
+        tsdmedian = np.median(df["TimeSinceDifference"].values)
+        tsdmin    = np.min(df["TimeSinceDifference"].values)
+        tsdmax    = np.max(df["TimeSinceDifference"].values)
 
-        df["LastDonationRange"] = df["Months since Last Donation"].apply(lastdonationrange)
+        df["TimeSinceMedianDifference"] =  df["TimeSinceDifference"].apply(lambda x: x - tsdmedian)        
+        df["TimeSinceMinDifference"]    =  df["TimeSinceDifference"].apply(lambda x: x - tsdmin)
+        df["TimeSinceMaxDifference"]    =  df["TimeSinceDifference"].apply(lambda x: x - tsdmax)
 
         return df
